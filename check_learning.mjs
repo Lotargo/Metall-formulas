@@ -1,0 +1,62 @@
+/** Check independent identities, known results and invalid-input boundaries. */
+import fs from 'node:fs/promises';
+import vm from 'node:vm';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+const context = vm.createContext({ Intl, Math, BigInt, Number, String, Object, Error });
+vm.runInContext(await fs.readFile(path.join(here, 'learning.js'), 'utf8'), context);
+const { types, evaluate } = context.MetallLearning;
+const checks = [];
+const check = (name, passed) => { checks.push({ name, passed: Boolean(passed) }); if (!passed) throw new Error(name); };
+const near = (a,b) => Math.abs(a-b) <= 1e-9*Math.max(1,Math.abs(b));
+const defaults = kind => Object.fromEntries(types[kind].params.map(p => [p.key,String(p.value)]));
+const run = (kind, edits={}) => evaluate(kind,{...defaults(kind),...Object.fromEntries(Object.entries(edits).map(([k,v])=>[k,String(v)]))});
+const rejects = (kind, edits) => { try { run(kind,edits); return false; } catch { return true; } };
+try {
+  for (const kind of Object.keys(types)) check(`Default example: ${kind}`, Boolean(run(kind).result));
+  check('Cylinder fixed reference',near(run('cylinder').numeric.value,196349.54084936206));
+  check('Diameter doubles area and volume fourfold',near(run('cylinder',{D:100}).numeric.value,4*run('cylinder').numeric.value));
+  check('Equal-diameter frustum equals cylinder',near(run('frustum',{D1:50,D2:50,L:100}).numeric.value,run('cylinder').numeric.value));
+  check('Cone is one third of matching cylinder',near(run('frustum',{D1:50,D2:0,L:100}).numeric.value,run('cylinder').numeric.value/3));
+  check('One litre of steel',near(run('mass').numeric.value,7.85));
+  check('Both negative deviations retain their signs',near(run('limits').numeric.value,49.8));
+  check('Contradictory tolerance bounds rejected',rejects('limits',{lower:0.3,upper:0.1}));
+  check('Curvature equality is rejected by strict screen',run('curvature',{D:81,lower:0,L:400,K:0.25,required:80}).numeric.passes===false);
+  check('Stock screening is numerically 80.45',near(run('curvature').numeric.effective,80.45));
+  check('Decimal stop does not round exact 0.3 up again',run('cut-stop',{L:0.3,minus:0,plus:0,step:0.1}).numeric.value===0.3);
+  check('Stop-step absence is explicit',near(run('cut-stop',{step:0}).numeric.value,204.2));
+  check('Decimal capacity is exact at boundary',run('capacity',{L:0.3,head:0,heads:0,tail:0,piece:0.1,kerf:0.05}).numeric.value===2);
+  check('An unusable bar has zero capacity',run('capacity',{L:20,tail:100}).numeric.value===0);
+  check('Bar quantity is rounded upward',run('bars').numeric.value===3);
+  check('Cutting speed/rpm round-trip',near(run('speed',{n:run('rpm').numeric.value}).numeric.value,120));
+  check('Zero feed is rejected',rejects('motion-time',{u:0}));
+  check('Known zero path has known zero time',run('motion-time',{L:0}).numeric.value===0);
+  check('Empty input remains unknown',rejects('mass',{V:''}));
+  check('Power and torque identities agree',near(run('torque').numeric.value*2*Math.PI*500/60000,2));
+  check('Efficiency above unity is rejected',rejects('drive-power',{eta:1.01}));
+  check('Impossible turning depth is rejected',rejects('turned-diameter',{D:10,a:6}));
+  check('Facing annulus agrees with independent area subtraction',near(run('facing').numeric.V,Math.PI*40*40));
+  check('Reversed facing diameters are rejected',rejects('facing',{d:90}));
+  check('Boring is ring difference, not a solid cylinder',near(run('boring').numeric.value,Math.PI*(12*12-10*10)*50));
+  check('Drill-tip axial angle uses half the full angle',near(run('drill-tip',{D:20,angle:90,H:50}).numeric.value,60));
+  check('Saw time matches independent reference',near(run('saw').numeric.value,2.2089323345553233));
+  check('Single-start thread follows axial lead',near(run('thread').numeric.value,40/(300*2)));
+  check('Hypotenuse uses radius change rather than diameter',near(run('inclined-path',{Z:3,deltaD:8}).numeric.value,5));
+  check('Setup allocation is 7.5 minutes',run('batch-time').numeric.value===7.5);
+  check('Larger batch reduces setup share',run('batch-time',{N:40}).numeric.value===6.75);
+  check('Inspection sample rounds up to 3',run('inspection').numeric.count===3);
+  check('Fractional piece count rejected',rejects('inspection',{N:2.5}));
+  check('Labor coefficient applies only to selected part',run('labor').numeric.value===12);
+  check('Selected labor cannot exceed base',rejects('labor',{selected:11}));
+  check('Time price is 200 rubles',run('hour-cost').numeric.value===200);
+  check('Exact monetary tie rounds half-up',run('hour-cost',{minutes:0.1,rate:603}).result.includes('1,01'));
+  check('Unit-price monetary tie rounds half-up',run('unit-cost',{price:1.005,quantity:1}).result.includes('1,01'));
+  check('A zero rate remains a known zero charge',run('hour-cost',{rate:0}).numeric.value===0);
+} finally {
+  const report = { date:'2026-11-11',status:checks.every(c=>c.passed)?'PASS':'FAIL',example_types:Object.keys(types).length,checks };
+  await fs.mkdir(path.join(here,'.test-results'),{recursive:true});
+  await fs.writeFile(path.join(here,'.test-results/learning-verification.json'),JSON.stringify(report,null,2),'utf8');
+  console.log(JSON.stringify({status:report.status,example_types:report.example_types,checks:checks.length},null,2));
+}

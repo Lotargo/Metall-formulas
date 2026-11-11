@@ -1,0 +1,17 @@
+{
+  "snapshot_date": "2026-11-11",
+  "code": {
+    "files": 640,
+    "runtime_files": 549
+  },
+  "documents": {
+    "documents": 2492
+  },
+  "office_cells": 529,
+  "word_documents": 6,
+  "pdf_documents": 52,
+  "pdf_pages": 199,
+  "go_ids": 138,
+  "source_references": 492,
+  "source_identities": 86
+}

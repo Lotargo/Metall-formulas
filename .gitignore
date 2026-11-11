@@ -1,0 +1,10 @@
+.audit/
+.test-results/
+.temp/
+.venv/
+node_modules/
+__pycache__/
+*.py[cod]
+dist/
+.env
+.env.*
