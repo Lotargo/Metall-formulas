@@ -9,6 +9,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ICONS = json.loads((HERE / "icons.json").read_text(encoding="utf-8"))
+SIDEBAR_ART = (HERE / "sidebar-art.svg").read_text(encoding="utf-8")
 GROUPS = [
     ("Основа расчёта", ["units", "geometry", "tolerances", "stock", "bars"]),
     (
@@ -82,6 +83,7 @@ def handbook_chrome(entries, categories, options):
     sidebar = f"""<!--
 {license_text}
 --><aside class="sidebar" id="booknav" aria-label="Разделы справочника">
+{SIDEBAR_ART}
 <div class="sidebar-head"><a class="brand" href="#start" aria-label="Metall: начало справочника"><span class="brand-mark" aria-hidden="true">M</span><span><strong>Metall</strong><small>Инженерная библиотека</small></span></a><button type="button" class="sidebar-close icon-button" id="nav-close" aria-label="Закрыть главы" autofocus>{icon("close")}</button></div>
 <nav class="sidebar-scroll" aria-label="Главы пособия">{nav_link("start", "Начало пособия", current=True)}{"".join(groups)}</nav>
 <div class="sidebar-footer"><nav class="sidebar-footlinks" aria-label="Материалы справочника">{nav_link("coverage", "Охват справочника")}</nav></div></aside>"""

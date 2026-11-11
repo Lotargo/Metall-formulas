@@ -65,16 +65,19 @@ small, .muted { font-size: 14px; color: var(--muted); }
 .skip:focus { top: 10px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 .sidebar { position: fixed; inset: 0 auto 0 0; display: flex; flex-direction: column; width: var(--sidebar-width); height: 100dvh; z-index: 6; background: var(--sidebar); color: #eef3f6; overflow: hidden; }
+.sidebar-art { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; overflow: hidden; color: var(--sidebar-focus); opacity: .38; pointer-events: none; user-select: none; }
+.sidebar-head, .sidebar-scroll, .sidebar-footer { position: relative; z-index: 1; }
+.sidebar .nav-text, .sidebar .nav-label, .sidebar .brand strong, .sidebar .brand small { text-shadow: 0 1px 3px var(--sidebar); }
 .sidebar :focus-visible { outline-color: var(--sidebar-focus); }
 .sidebar-head { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 12px; padding: calc(22px + env(safe-area-inset-top)) 20px 22px; }
 .brand { display: flex; align-items: center; gap: 12px; color: inherit; text-decoration: none; }
-.brand-mark { display: grid; flex: 0 0 auto; place-items: center; width: 38px; height: 38px; border: 1px solid rgba(255,255,255,.2); border-radius: 10px; font-size: 18px; font-weight: 750; letter-spacing: -.04em; }
+.brand-mark { display: grid; flex: 0 0 auto; place-items: center; width: 38px; height: 38px; border: 1px solid rgba(255,255,255,.2); border-radius: 10px; background: rgba(24,32,41,.8); font-size: 18px; font-weight: 750; letter-spacing: -.04em; }
 .brand strong, .brand small { display: block; }
 .brand strong { color: #fff; font-size: 17px; letter-spacing: .01em; }
 .brand small { margin-top: 2px; color: var(--sidebar-muted); font-size: 11px; }
 .sidebar-scroll { flex: 1; min-height: 0; padding: 0 12px 14px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #485562 transparent; }
 .nav-group { margin-top: 20px; }
-.nav-label { padding: 0 12px 8px; color: var(--sidebar-muted); font-size: 10px; font-weight: 600; line-height: 1.5; letter-spacing: .08em; text-transform: uppercase; text-wrap: nowrap; }
+.nav-label { padding: 0 12px 8px; color: #abb9c6; font-size: 10px; font-weight: 600; line-height: 1.5; letter-spacing: .08em; text-transform: uppercase; text-wrap: nowrap; }
 .sidebar a[data-section] { position: relative; display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 40px; padding: 9px 12px; margin: 3px 0; border-radius: 8px; color: #c9d2da; line-height: 1.4; text-decoration: none; font-size: 13px; }
 .sidebar a[data-section]::before { content: ''; position: absolute; left: 0; top: 50%; width: 3px; height: 18px; border-radius: 0 3px 3px 0; background: var(--sidebar-focus); opacity: 0; transform: translateY(-50%) scaleY(.5); transition: transform 160ms ease-out, opacity 160ms ease-out; }
 .sidebar a[data-section]:hover { background: rgba(255,255,255,.06); color: #fff; }
@@ -85,9 +88,9 @@ small, .muted { font-size: 14px; color: var(--muted); }
 .sidebar a[data-section]:hover .nav-icon { transform: translateX(2px); color: var(--sidebar-focus); }
 .sidebar a[data-section][aria-current] .nav-icon { color: var(--sidebar-focus); }
 .nav-text { min-width: 0; }
-.sidebar .count { min-width: 25px; padding: 2px 6px; border-radius: 5px; background: rgba(255,255,255,.06); color: #b8c3cd; font-size: 11px; line-height: 1.4; text-align: center; font-variant-numeric: tabular-nums; }
+.sidebar .count { min-width: 25px; padding: 2px 6px; border-radius: 5px; background: rgba(39,52,65,.9); color: #b8c3cd; font-size: 11px; line-height: 1.4; text-align: center; font-variant-numeric: tabular-nums; }
 .sidebar a[aria-current] .count { background: rgba(198,228,246,.12); color: var(--sidebar-focus); }
-.sidebar-footer { flex: 0 0 auto; padding: 10px 12px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(255,255,255,.1); }
+.sidebar-footer { flex: 0 0 auto; padding: 10px 12px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(255,255,255,.1); background: rgba(24,32,41,.9); }
 .sidebar-footlinks { display: grid; grid-template-columns: 1fr; }
 .sidebar-footlinks a[data-section] { display: flex; gap: 8px; min-height: 36px; padding: 8px 10px; font-size: 12px; }
 .sidebar-footlinks .nav-icon svg { width: 16px; height: 16px; }
@@ -583,6 +586,95 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 --><aside class="sidebar" id="booknav" aria-label="Разделы справочника">
+<svg xmlns="http://www.w3.org/2000/svg" class="sidebar-art" viewBox="0 0 300 1000" preserveAspectRatio="xMaxYMin meet" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="sidebar-drawing-grid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <path d="M25 0H0V25" fill="none" stroke="currentColor" stroke-width=".45" stroke-opacity=".12"/>
+    </pattern>
+    <pattern id="sidebar-drawing-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <path d="M0 0V7" fill="none" stroke="currentColor" stroke-width=".7" stroke-opacity=".55"/>
+    </pattern>
+    <linearGradient id="sidebar-drawing-visibility">
+      <stop offset="0" stop-color="white" stop-opacity=".06"/>
+      <stop offset=".4" stop-color="white" stop-opacity=".3"/>
+      <stop offset=".7" stop-color="white" stop-opacity=".85"/>
+      <stop offset="1" stop-color="white"/>
+    </linearGradient>
+    <mask id="sidebar-drawing-mask">
+      <rect width="300" height="1000" fill="url(#sidebar-drawing-visibility)"/>
+    </mask>
+    <marker id="sidebar-drawing-arrow" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="m0 0 6 3-6 3Z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g mask="url(#sidebar-drawing-mask)">
+    <rect width="300" height="1000" fill="url(#sidebar-drawing-grid)"/>
+    <g fill="none" stroke="currentColor" stroke-width=".9" stroke-linecap="round" stroke-linejoin="round">
+      <g stroke-opacity=".22">
+        <path d="M0 193 32 162H161M0 299l83-78h50M11 651l74-75h71M1 933h299M271 0v1000"/>
+        <path d="M98 90a114 114 0 0 1 202 0M106 90a106 106 0 0 0 194 59M83 654a170 170 0 0 1 165 239M26 610a214 214 0 0 1 257 319"/>
+        <path d="M35 465v-12a14 14 0 0 1 14-14h54M146 261l53-52h79M160 602l54 46v70"/>
+      </g>
+
+      <g class="sidebar-flange">
+        <circle cx="212" cy="90" r="76" stroke-opacity=".28"/>
+        <circle cx="212" cy="90" r="62"/>
+        <circle cx="212" cy="90" r="50" stroke-dasharray="24 5" stroke-opacity=".55"/>
+        <circle cx="212" cy="90" r="27"/>
+        <circle cx="212" cy="90" r="24" stroke-opacity=".6"/>
+        <g stroke-width="1.1">
+          <circle cx="255.84" cy="46.16" r="7.5"/><circle cx="255.84" cy="133.84" r="7.5"/>
+          <circle cx="168.16" cy="46.16" r="7.5"/><circle cx="168.16" cy="133.84" r="7.5"/>
+        </g>
+        <g stroke-dasharray="11 4 2 4" stroke-opacity=".6"><path d="M212 0v178M116 90h184M155 33l114 114M155 147 269 33"/></g>
+        <path d="m253 42 23-23h24m-43 113 22 10h21" stroke-opacity=".85"/>
+        <path d="M166 184v24m112-24v24"/>
+        <path d="M166 201h112" marker-start="url(#sidebar-drawing-arrow)" marker-end="url(#sidebar-drawing-arrow)"/>
+      </g>
+
+      <g class="sidebar-bearing">
+        <g stroke-opacity=".2"><path d="M167 365V284l35-35h98M165 502v54l47 47h88M177 365h119M177 502h119"/><circle cx="237" cy="431" r="127"/><circle cx="237" cy="431" r="140" stroke-dasharray="24 7"/></g>
+        <path d="M222 280h24v46q0 16 16 16h32v178h-32q-16 0-16 16v46h-24q-9 0-9-14v-18q0-30-20-40l-18-8V365l18-8q20-10 20-40v-23q0-14 9-14Zm-20 94q-10 0-10 10v100q0 10 10 10h57q10 0 10-10V384q0-10-10-10Z" fill="url(#sidebar-drawing-hatch)" fill-rule="evenodd"/>
+        <path d="M228 292h10v34q0 24 23 24h24v162h-24q-23 0-23 24v34h-10v-20q0-37-29-49l-14-7V373l14-7q29-12 29-49Z" stroke-opacity=".45"/>
+        <rect x="201" y="379" width="58" height="110" rx="5"/>
+        <path d="M204 388h42v20h-42m0 46h42v26h-42M246 388q9 0 9 10v72q0 10-9 10"/>
+        <path d="M204 392h13m15 0h13m-41 84h13m15 0h13M205 407h12m15 0h13m-40 48h12m15 0h13" stroke-opacity=".65"/>
+        <circle cx="224" cy="400" r="8"/><circle cx="224" cy="468" r="8"/>
+        <circle cx="224" cy="400" r="6.2" stroke-opacity=".45"/><circle cx="224" cy="468" r="6.2" stroke-opacity=".45"/>
+        <path d="M86 418h25v-4h15v-6h34v-4h36v-5h8v70h-8v-11h-36v-4h-34v-6h-15v-4H86q-5 0-5-5v-16q0-5 5-5Z"/>
+        <path d="M111 418v26m15-30v34m34-40v46m36-50v54M86 421h25m-25 20h25" stroke-opacity=".55"/>
+        <path d="M204 413h39v42h-39m39-42v42"/>
+        <path d="M40 431h260" stroke-dasharray="13 4 2 4" stroke-opacity=".65"/>
+        <path d="M54 418h26m-26 26h26"/>
+        <path d="M60 418v26" marker-start="url(#sidebar-drawing-arrow)" marker-end="url(#sidebar-drawing-arrow)"/>
+      </g>
+
+      <g class="sidebar-section">
+        <circle cx="224" cy="824" r="32" fill="url(#sidebar-drawing-hatch)"/>
+        <path d="M219 792v-19h10v19m-10-5v14h10v-14"/>
+        <path d="M178 824h92M224 762v108" stroke-dasharray="11 4 2 4" stroke-opacity=".65"/>
+        <path d="M258 792h22m-22 64h22"/>
+        <path d="M274 792v64" marker-start="url(#sidebar-drawing-arrow)" marker-end="url(#sidebar-drawing-arrow)"/>
+        <path d="M219 768v-9m10 9v-9"/>
+        <path d="M219 765h10" marker-start="url(#sidebar-drawing-arrow)" marker-end="url(#sidebar-drawing-arrow)"/>
+        <path d="M47 945h249M192 945v-15m-5 15 5-7 5 7Z"/>
+        <rect x="184" y="914" width="16" height="16"/>
+        <rect x="96" y="905" width="65" height="15"/>
+        <path d="M111 905v15m35-15v15m-47-7.5h9m-4.5-4.5v9"/>
+        <circle cx="103.5" cy="912.5" r="3.2"/>
+        <path d="M96 918H84l-24 27" marker-end="url(#sidebar-drawing-arrow)"/>
+      </g>
+    </g>
+    <g fill="currentColor" font-family="Cambria,Georgia,serif" font-size="10" font-style="italic">
+      <text x="235" y="14">⌀72 h7</text><text x="261" y="137">4×⌀9</text>
+      <text x="222" y="194" text-anchor="middle">120</text>
+      <text x="52" y="431" text-anchor="middle" transform="rotate(-90 52 431)">⌀36</text>
+      <text x="213" y="754">A–A</text><text x="237" y="759">10 h9</text><text x="282" y="828">⌀52</text>
+      <text x="114" y="916" font-size="8">0,02 A</text><text x="192" y="926" text-anchor="middle" font-style="normal">A</text>
+    </g>
+  </g>
+</svg>
+
 <div class="sidebar-head"><a class="brand" href="#start" aria-label="Metall: начало справочника"><span class="brand-mark" aria-hidden="true">M</span><span><strong>Metall</strong><small>Инженерная библиотека</small></span></a><button type="button" class="sidebar-close icon-button" id="nav-close" aria-label="Закрыть главы" autofocus><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x" aria-hidden="true" focusable="false"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button></div>
 <nav class="sidebar-scroll" aria-label="Главы пособия"><a href="#start" data-section="start" aria-current="location" title="Начало пособия"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open" aria-hidden="true" focusable="false"><path d="M12 5v16"></path><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"></path></svg></span><span class="nav-text">Начало пособия</span></a><section class="nav-group" aria-labelledby="nav-group-0"><h2 class="nav-label" id="nav-group-0">Основа расчёта</h2><a href="#units" data-section="units" title="Единицы и округление"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ruler" aria-hidden="true" focusable="false"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"></path><path d="m14.5 12.5 2-2"></path><path d="m11.5 9.5 2-2"></path><path d="m8.5 6.5 2-2"></path><path d="m17.5 15.5 2-2"></path></svg></span><span class="nav-text">Единицы и округление</span><span class="count" data-total="3" aria-label="Статей в разделе: 3">3</span></a><a href="#geometry" data-section="geometry" title="Геометрия и масса"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shapes" aria-hidden="true" focusable="false"><path d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z"></path><rect x="3" y="14" width="7" height="7" rx="1"></rect><circle cx="17.5" cy="17.5" r="3.5"></circle></svg></span><span class="nav-text">Геометрия и масса</span><span class="count" data-total="10" aria-label="Статей в разделе: 10">10</span></a><a href="#tolerances" data-section="tolerances" title="Допуски и размерные цепи"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scan-line" aria-hidden="true" focusable="false"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><path d="M7 12h10"></path></svg></span><span class="nav-text">Допуски и цепи</span><span class="count" data-total="5" aria-label="Статей в разделе: 5">5</span></a><a href="#stock" data-section="stock" title="Подбор заготовки и кривизна"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cylinder" aria-hidden="true" focusable="false"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14a9 3 0 0 0 18 0V5"></path></svg></span><span class="nav-text">Заготовки и кривизна</span><span class="count" data-total="8" aria-label="Статей в разделе: 8">8</span></a><a href="#bars" data-section="bars" title="Раскрой прутков и материальный баланс"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scissors" aria-hidden="true" focusable="false"><circle cx="6" cy="6" r="3"></circle><path d="M8.12 8.12 12 12"></path><path d="M20 4 8.12 15.88"></path><circle cx="6" cy="18" r="3"></circle><path d="M14.8 14.8 20 20"></path></svg></span><span class="nav-text">Раскрой и баланс</span><span class="count" data-total="22" aria-label="Статей в разделе: 22">22</span></a></section><section class="nav-group" aria-labelledby="nav-group-1"><h2 class="nav-label" id="nav-group-1">Обработка</h2><a href="#feeds" data-section="feeds" title="Режимы, силы и мощность"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gauge" aria-hidden="true" focusable="false"><path d="m12 14 4-4"></path><path d="M3.34 19a10 10 0 1 1 17.32 0"></path></svg></span><span class="nav-text">Режимы и мощность</span><span class="count" data-total="25" aria-label="Статей в разделе: 25">25</span></a><a href="#turning" data-section="turning" title="Точение, расточка и канавки"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg></span><span class="nav-text">Точение и расточка</span><span class="count" data-total="46" aria-label="Статей в разделе: 46">46</span></a><a href="#drilling" data-section="drilling" title="Сверление и центрование"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-drill" aria-hidden="true" focusable="false"><path d="M10 18a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a3 3 0 0 1-3-3 1 1 0 0 1 1-1z"></path><path d="M13 10H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1l-.81 3.242a1 1 0 0 1-.97.758H8"></path><path d="M14 4h3a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-3"></path><path d="M18 6h4"></path><path d="m5 10-2 8"></path><path d="m7 18 2-8"></path></svg></span><span class="nav-text">Сверление</span><span class="count" data-total="28" aria-label="Статей в разделе: 28">28</span></a><a href="#threading" data-section="threading" title="Резьба и метчики"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-up" aria-hidden="true" focusable="false"><path d="m3 16 4 4 4-4"></path><path d="M7 20V4"></path><path d="m21 8-4-4-4 4"></path><path d="M17 4v16"></path></svg></span><span class="nav-text">Резьба и метчики</span><span class="count" data-total="25" aria-label="Статей в разделе: 25">25</span></a><a href="#milling" data-section="milling" title="Фрезерование пазов"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move" aria-hidden="true" focusable="false"><path d="M12 2v20"></path><path d="m15 19-3 3-3-3"></path><path d="m19 9 3 3-3 3"></path><path d="M2 12h20"></path><path d="m5 9-3 3 3 3"></path><path d="m9 5 3-3 3 3"></path></svg></span><span class="nav-text">Фрезерование</span><span class="count" data-total="8" aria-label="Статей в разделе: 8">8</span></a><a href="#grinding" data-section="grinding" title="Круглое шлифование"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-disc-3" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"></circle><path d="M6 12c0-1.7.7-3.2 1.8-4.2"></path><circle cx="12" cy="12" r="2"></circle><path d="M18 12c0 1.7-.7 3.2-1.8 4.2"></path></svg></span><span class="nav-text">Шлифование</span><span class="count" data-total="17" aria-label="Статей в разделе: 17">17</span></a><a href="#machines" data-section="machines" title="Проверка станка и нагрузки"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-2" aria-hidden="true" focusable="false"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg></span><span class="nav-text">Станки и нагрузки</span><span class="count" data-total="6" aria-label="Статей в разделе: 6">6</span></a></section><section class="nav-group" aria-labelledby="nav-group-2"><h2 class="nav-label" id="nav-group-2">Время и смета</h2><a href="#time" data-section="time" title="Время, партия и ОТК"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock-3" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6h4"></path></svg></span><span class="nav-text">Время, партия и ОТК</span><span class="count" data-total="10" aria-label="Статей в разделе: 10">10</span></a><a href="#scenarios" data-section="scenarios" title="Оценочные сценарии"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-waypoints" aria-hidden="true" focusable="false"><path d="m10.586 5.414-5.172 5.172"></path><path d="m18.586 13.414-5.172 5.172"></path><path d="M6 12h12"></path><circle cx="12" cy="20" r="2"></circle><circle cx="12" cy="4" r="2"></circle><circle cx="20" cy="12" r="2"></circle><circle cx="4" cy="12" r="2"></circle></svg></span><span class="nav-text">Оценочные сценарии</span><span class="count" data-total="12" aria-label="Статей в разделе: 12">12</span></a><a href="#cost" data-section="cost" title="Смета, трудоёмкость и резерв"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-coins" aria-hidden="true" focusable="false"><path d="M13.744 17.736a6 6 0 1 1-7.48-7.48"></path><path d="M15 6h1v4"></path><path d="m6.134 14.768.866-.5 2 3.464"></path><circle cx="16" cy="8" r="6"></circle></svg></span><span class="nav-text">Смета и трудоёмкость</span><span class="count" data-total="9" aria-label="Статей в разделе: 9">9</span></a><a href="#metrics" data-section="metrics" title="Служебные показатели"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-no-axes-combined" aria-hidden="true" focusable="false"><path d="M12 16v5"></path><path d="M16 14.639V21"></path><path d="M20 10.656V21"></path><path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15"></path><path d="M4 18.463V21"></path><path d="M8 14.656V21"></path></svg></span><span class="nav-text">Служебные показатели</span><span class="count" data-total="2" aria-label="Статей в разделе: 2">2</span></a></section><section class="nav-group" aria-labelledby="nav-group-3"><h2 class="nav-label" id="nav-group-3">Методы и исследования</h2><a href="#library" data-section="library" title="Библиотечные и прежние методы"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-library" aria-hidden="true" focusable="false"><path d="m16 6 4 14"></path><path d="M12 6v14"></path><path d="M8 8v12"></path><path d="M4 4v16"></path></svg></span><span class="nav-text">Библиотечные методы</span><span class="count" data-total="31" aria-label="Статей в разделе: 31">31</span></a><a href="#prepared" data-section="prepared" title="Подготовлены, но не задействованы"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flask-conical" aria-hidden="true" focusable="false"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"></path><path d="M6.453 15h11.094"></path><path d="M8.5 2h7"></path></svg></span><span class="nav-text">Подготовленные формулы</span><span class="count" data-total="10" aria-label="Статей в разделе: 10">10</span></a><a href="#comparison" data-section="comparison" title="Исследования и контрольные примеры"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-git-compare-arrows" aria-hidden="true" focusable="false"><circle cx="5" cy="6" r="3"></circle><path d="M12 6h5a2 2 0 0 1 2 2v7"></path><path d="m15 9-3-3 3-3"></path><circle cx="19" cy="18" r="3"></circle><path d="M12 18H7a2 2 0 0 1-2-2V9"></path><path d="m9 15 3 3-3 3"></path></svg></span><span class="nav-text">Исследования и примеры</span><span class="count" data-total="203" aria-label="Статей в разделе: 203">203</span></a></section></nav>
 <div class="sidebar-footer"><nav class="sidebar-footlinks" aria-label="Материалы справочника"><a href="#coverage" data-section="coverage" title="Охват справочника"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span><span class="nav-text">Охват справочника</span></a></nav></div></aside><div class="layout"><div id="header-sentinel" aria-hidden="true"></div><header class="topbar" aria-label="Поиск и действия справочника">
